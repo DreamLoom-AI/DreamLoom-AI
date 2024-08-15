@@ -10,6 +10,7 @@
         body {
             font-family: 'Space Grotesk', sans-serif;
             background-color: black;
+            cursor: none;
         }
         @keyframes float {
             0% { transform: translateY(0px); }
@@ -38,14 +39,20 @@
         }
         #cursor-glow {
             position: fixed;
-            width: 200px;
-            height: 200px;
+            width: 300px;
+            height: 300px;
             border-radius: 50%;
             pointer-events: none;
             mix-blend-mode: screen;
             z-index: 9999;
-            opacity: 0;
-            transition: opacity 0.3s ease;
+            transition: opacity 0.3s ease, transform 0.1s ease;
+        }
+        .social-icon {
+            fill: white;
+            transition: fill 0.3s ease;
+        }
+        .social-icon:hover {
+            fill: #a64dff;
         }
     </style>
 </head>
@@ -54,10 +61,22 @@
     <div id="cursor-glow"></div>
     <div class="z-10 text-center p-4 sm:p-8">
         <h1 class="text-5xl sm:text-7xl md:text-9xl -mb-1 sm:-mb-2 md:-mb-3 font-bold text-gradient floating">DreamLoom</h1>
-        <h2 class="text-2xl sm:text-3xl md:text-4xl mb-4 sm:mb-6 md:mb-8 text-gray-300">AI Magic × Human Ingenuity</h2>
-        <a href="mailto:nikshep@dreamloom.ai" class="text-lg sm:text-xl md:text-2xl px-4 sm:px-6 rounded-full inline-flex items-center transition duration-300 ease-in-out transform hover:scale-105">
+        <h2 class="text-2xl sm:text-3xl md:text-4xl sm:mb-6 md:mb-8 text-gray-300">AI Magic × Human Ingenuity</h2>
+        <a href="mailto:nikshep@dreamloom.ai" class="text-lg sm:text-xl md:text-2xl px-4 sm:px-6 rounded-full inline-flex items-center transition duration-300 ease-in-out transform hover:scale-105 mb-4">
             Contact: nikshep@dreamloom.ai
         </a>
+        <div class="flex justify-center space-x-4">
+            <a href="https://x.com/dreamloomai" target="_blank" rel="noopener noreferrer" class="transition duration-300 ease-in-out transform hover:scale-110">
+                <svg class="social-icon" width="24" height="24" viewBox="0 0 24 24">
+                    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                </svg>
+            </a>
+            <a href="https://www.linkedin.com/company/dreamloom" target="_blank" rel="noopener noreferrer" class="transition duration-300 ease-in-out transform hover:scale-110">
+                <svg class="social-icon" width="24" height="24" viewBox="0 0 24 24">
+                    <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
+                </svg>
+            </a>
+        </div>
     </div>
     <script>
         function createStars() {
@@ -74,21 +93,33 @@
             }
         }
         createStars();
+
         const cursorGlow = document.getElementById('cursor-glow');
-        let timeoutId;
+        let mouseX = 0, mouseY = 0;
+        let currentX = 0, currentY = 0;
+
         document.addEventListener('mousemove', (e) => {
-            const x = e.clientX;
-            const y = e.clientY;
-            
-            cursorGlow.style.left = `${x - 100}px`;
-            cursorGlow.style.top = `${y - 100}px`;
-            cursorGlow.style.opacity = '0.3';
-            cursorGlow.style.background = `radial-gradient(circle at 50% 50%, rgba(128, 0, 128, 0.3), transparent 70%)`;
-            clearTimeout(timeoutId);
-            timeoutId = setTimeout(() => {
-                cursorGlow.style.opacity = '0';
-            }, 1000);
+            mouseX = e.clientX;
+            mouseY = e.clientY;
         });
+
+        function animateCursor() {
+            let dx = mouseX - currentX;
+            let dy = mouseY - currentY;
+
+            currentX += dx * 0.1;
+            currentY += dy * 0.1;
+
+            cursorGlow.style.left = `${currentX - 150}px`;
+            cursorGlow.style.top = `${currentY - 150}px`;
+            
+            const gradientColor = `rgba(${128 + Math.sin(Date.now() * 0.003) * 64}, 0, ${128 + Math.cos(Date.now() * 0.003) * 64}, 0.5)`;
+            cursorGlow.style.background = `radial-gradient(circle at 50% 50%, ${gradientColor}, transparent 70%)`;
+            
+            requestAnimationFrame(animateCursor);
+        }
+
+        animateCursor();
     </script>
 </body>
 </html>
